@@ -40,6 +40,7 @@ namespace CompanyEmployees.Controllers
       if( company == null )
       {
         _logger.LogInfo( $"Company with id: {id} doesn't exist in the database." );
+
         return NotFound();
       }
       else
