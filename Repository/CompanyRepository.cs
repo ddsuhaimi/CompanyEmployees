@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Contracts;
 using Entities;
@@ -11,6 +12,11 @@ namespace Repository
   {
     public CompanyRepository( RepositoryContext repositoryContext ) : base( repositoryContext )
     {
+    }
+
+    public IEnumerable<Company> GetAllCompanies( bool trackChanges )
+    {
+      return FindAll( trackChanges ).OrderBy( c => c.Name ).ToList();
     }
   }
 }
