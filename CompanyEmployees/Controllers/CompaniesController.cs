@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using CompanyEmployees.ModelBinders;
 using Contracts;
 using Entities.DataTransferObjects;
 using Entities.Models;
@@ -50,7 +51,7 @@ namespace CompanyEmployees.Controllers
     }
 
     [HttpGet( "collection/({ids})", Name = "CompanyCollection" )]
-    public IActionResult GetCompanyCollection( IEnumerable<Guid> ids )
+    public IActionResult GetCompanyCollection( [ModelBinder( BinderType = typeof( ArrayModelBinder ) )] IEnumerable<Guid> ids )
     {
       if( ids == null )
       {
@@ -86,7 +87,7 @@ namespace CompanyEmployees.Controllers
       return CreatedAtRoute( "GetCompanyById", new { Id = companyToReturn.Id }, companyToReturn );
     }
 
-    [HttpPost]
+    [HttpPost( "collection" )]
     public IActionResult CreateCompanyCollection( [FromBody] IEnumerable<CompanyForCreationDto> companies )
     {
       if( companies == null )
@@ -106,6 +107,22 @@ namespace CompanyEmployees.Controllers
       var ids = string.Join( ",", companyCollectionToReturn.Select( c => c.Id ) );
 
       return CreatedAtRoute( "CompanyCollection", new { ids }, companyCollectionToReturn );
+    }
+
+    [HttpDelete( "{id}" )]
+    public IActionResult DeleteCompany( Guid id )
+    {
+      var companyFromDb = _repository.Company.GetCompany( id, false );
+      if( companyFromDb == null )
+      {
+        _logger.LogInfo( $"Company with id {id} doesn't exist in the database" );
+        return NotFound();
+      }
+
+      _repository.Company.DeleteCompany( companyFromDb );
+      _repository.Save();
+
+      return NoContent();
     }
   }
 }

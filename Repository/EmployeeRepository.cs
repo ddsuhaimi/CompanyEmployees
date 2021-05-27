@@ -20,6 +20,11 @@ namespace Repository
       Create( employee );
     }
 
+    public void DeleteEmployee( Employee employee )
+    {
+      Delete( employee );
+    }
+
     public Employee GetEmployee( Guid companyId, Guid id, bool trackChanges )
     {
       return FindByCondition( e => e.CompanyId.Equals( companyId ) && e.Id.Equals( id ), false ).SingleOrDefault();
